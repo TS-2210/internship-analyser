@@ -1,0 +1,8 @@
+CREATE VIEW DataJobs AS
+SELECT *
+FROM Job
+WHERE LOWER(title)
+LIKE '%data%';
+SELECT *
+FROM DataJobs
+LIMIT 5;
