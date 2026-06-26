@@ -1,8 +1,17 @@
-CREATE VIEW DataJobs AS
+CREATE OR REPLACE VIEW DataJobs AS
 SELECT *
 FROM Job
 WHERE LOWER(title)
 LIKE '%data%';
 SELECT *
 FROM DataJobs
+LIMIT 5;
+
+CREATE OR REPLACE VIEW SeniorLevel AS
+SELECT *
+FROM Job
+WHERE LOWER(title)
+LIKE '%senior%';
+SELECT *
+FROM SeniorLevel
 LIMIT 5;

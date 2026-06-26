@@ -41,11 +41,11 @@ CREATE TABLE IF NOT EXISTS RawJobs(
     job_skills TEXT
 );
 SELECT *
-FROM rawjobs
+FROM RawJobs
 LIMIT 5; 
 INSERT INTO Company(name)
 SELECT DISTINCT company
-FROM rawjobs
+FROM RawJobs
 WHERE company IS NOT NULL;
 
 /*SELECT *
@@ -54,9 +54,49 @@ LIMIT 5; testing*/
 
 INSERT INTO Job(title,location,link,first_seen, city,country,level,type,summary,company_id)
 SELECT r.job_title, r.job_location, r.job_link,  TO_DATE(r.first_seen,'YYYY-MM-DD'), r.search_city, r.search_country, r.job_level, r.job_type, r.job_summary, c.company_id
-FROM rawjobs r
-JOIN company c ON r.company = c.name;
+FROM RawJobs r
+JOIN Company c ON r.company = c.name;
 
 /*SELECT *
 FROM Job
 LIMIT 5; testing*/
+SELECT job_skills
+FROM RawJobs
+LIMIT 10; /*checking format of skills*/
+
+ALTER TABLE Skill
+ALTER COLUMN skill_name
+TYPE TEXT;
+
+INSERT INTO Skill(skill_name)
+SELECT DISTINCT TRIM(skill)
+FROM(
+    SELECT
+    UNNEST(
+        STRING_TO_ARRAY(job_skills, ',')
+    ) AS skill
+    FROM RawJobs
+    WHERE job_skills IS NOT NULL
+) skills;
+
+/*SELECT *
+FROM skill
+LIMIT 5;*/
+
+INSERT INTO JobSkill(job_id, skill_id)
+SELECT j.job_id, s.skill_id
+FROM RawJobs r 
+JOIN Job j
+ON j.title=r.job_title
+JOIN LATERAL
+UNNEST(
+    STRING_TO_ARRAY(r.job_skills,',')
+)
+AS split_skill(skill)
+ON TRUE
+JOIN Skill s
+ON s.skill_name=
+TRIM(split_skill.skill);
+SELECT *
+FROM JobSkill
+LIMIT 5;
