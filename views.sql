@@ -1,0 +1,12 @@
+CREATE OR REPLACE VIEW DataJobs AS
+SELECT *
+FROM Job
+WHERE LOWER(title)
+LIKE '%data%';
+
+CREATE OR REPLACE VIEW SeniorJobs AS
+SELECT *
+FROM Job
+WHERE LOWER(level)
+LIKE '%senior%';
+
